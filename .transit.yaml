@@ -1,8 +1,9 @@
 include:
-    - "./test"
+    - "test/test.txt"
     - "./test2"
     - "abc"
-    - "def"
+    - "test"
 exclude:
-    - "*.tmp"
-    - "*.rb"
+    - "test/*.tmp"
+    - "test/123/123"
+    - "*/*.swp"

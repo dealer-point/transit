@@ -40,10 +40,15 @@ def scan_file(path)
   end
 end
 
+def exclude_path?(path, exclude)
+  exclude.each do |regs|
+    return true if File.fnmatch(regs, path, File::FNM_PATHNAME | File::FNM_DOTMATCH)
+  end
+  false
+end
+
 def rscan_dir(root_path, exclude)
   if File.directory?(root_path)
-    #puts root_path
-
     Dir.foreach root_path do |path|
       unless path == '.' || path == '..'
         next_path = "#{root_path}/#{path}"
@@ -51,25 +56,16 @@ def rscan_dir(root_path, exclude)
         if File.directory?(next_path)
           rscan_dir(next_path, exclude) unless path == '.' || path == '..'
         else
-
-          fl_exclude = false
-
-          exclude.each do |regs|
-            if File.fnmatch("**/#{regs}", next_path, File::FNM_PATHNAME | File::FNM_DOTMATCH)
-              fl_exclude = true
-
-              break
-            end
-          end
-
-          unless fl_exclude
+          unless exclude_path? next_path, exclude
             puts "File: #{next_path}"
             scan_file next_path
           end
-
         end
       end
     end
+  elsif File.file? root_path
+    puts "File: #{root_path}"
+    scan_file root_path
   end
 end
 
