@@ -7,3 +7,4 @@ exclude:
     - "test/*.tmp"
     - "test/123/123"
     - "*/*.swp"
+    - "*/test.txt"
