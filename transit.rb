@@ -12,7 +12,7 @@ def scan_file(path)
     line_num = 1
     File.open(path, "r") do |infile|
       while (line = infile.gets)
-        if index = line.index(/\p{Cyrillic}/) then
+        if index = line.index(/\p{Cyrillic}/)
           puts "#{line_num}: start at #{index}"
         end
         line_num = line_num + 1
@@ -25,22 +25,22 @@ def scan_file(path)
 end
 
 def rscan_dir(root_path, exclude)
-  if File.directory?(root_path) then
+  if File.directory?(root_path)
     #puts root_path
     Dir.foreach root_path do |path|
-      unless path == '.' || path == '..' then
+      unless path == '.' || path == '..'
         next_path = "#{root_path}/#{path}"
-        if File.directory?(next_path) then
+        if File.directory?(next_path)
           rscan_dir(next_path, exclude) unless path == '.' || path == '..'
         else
           fl_exclude = false
           exclude.each do |regs|
-            if File.fnmatch("**/#{regs}", next_path, File::FNM_PATHNAME | File::FNM_DOTMATCH) then
+            if File.fnmatch("**/#{regs}", next_path, File::FNM_PATHNAME | File::FNM_DOTMATCH)
               fl_exclude = true
               break
             end
           end
-          unless fl_exclude then
+          unless fl_exclude
             puts "File: #{path}\n"
             scan_file next_path
           end
