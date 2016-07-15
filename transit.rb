@@ -17,10 +17,23 @@ if ARGV[0] == "-c"
   end
 end
 
-CONFIG = YAML.load_file(config_file)
+if File.file? config_file
+  CONFIG = YAML.load_file(config_file)
+else
+  puts "Please create valid config file. Read: (https://github.com/dealer-point/transit)"
+
+  exit
+end
 
 paths = CONFIG['include']
 exclude = CONFIG['exclude']
+
+if paths.nil? || exclude.nil?
+  puts "Please create valid config file. Read: (https://github.com/dealer-point/transit)"
+
+  exit
+end
+
 
 class String
   def black;          "\e[30m#{self}\e[0m" end
@@ -52,13 +65,12 @@ def scan_file(path)
   begin
     line_num = 1
     File.open(path, "r") do |infile|
-      while (line = infile.gets)
+      infile.each_line do |line|
         if start_idx = line.index(/\p{Cyrillic}/)
           end_idx = line.index(' ', start_idx)
-          #puts "#{line_num}: start at #{start_idx} \"#{line[start_idx, end_idx - start_idx]}\"..."
           puts "#{path.green}:#{line_num.to_s.brown}:#{start_idx.to_s.brown} \t\"#{line[start_idx, end_idx - start_idx]}\"".gray
         end
-        line_num = line_num + 1
+        line_num += 1
       end
     end
   rescue => err
