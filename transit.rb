@@ -63,7 +63,7 @@ def rscan_dir(root_path, exclude)
           end
 
           unless fl_exclude
-            puts "File: #{path}\n"
+            puts "File: #{next_path}"
             scan_file next_path
           end
 
