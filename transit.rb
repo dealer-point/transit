@@ -27,8 +27,9 @@ def scan_file(path)
     line_num = 1
     File.open(path, "r") do |infile|
       while (line = infile.gets)
-        if index = line.index(/\p{Cyrillic}/)
-          puts "#{line_num}: start at #{index}"
+        if start_idx = line.index(/\p{Cyrillic}/)
+          end_idx = line.index(' ', start_idx)
+          puts "#{line_num}: start at #{start_idx} \"#{line[start_idx, end_idx - start_idx]}\"..."
         end
         line_num = line_num + 1
       end
