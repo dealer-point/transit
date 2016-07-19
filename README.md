@@ -1,6 +1,6 @@
 transit
 =======
-"Tranist search russian letters in files"
+"Tranist - search line with russian letters in source files"
 
 config
 ------

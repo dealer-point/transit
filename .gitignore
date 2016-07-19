@@ -2,7 +2,7 @@
 *.gem
 *.rbc
 .editorconfig
-.transit.yaml
+transit.yaml
 /.config
 /coverage/
 /InstalledFiles
