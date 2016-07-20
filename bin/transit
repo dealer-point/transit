@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'transit'
+
+puts "TransIt - search line in source files with russian letters"
+Transit::Runit.new ARGV

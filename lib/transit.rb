@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require "runit/version"
+require "transit/version"
 require "yaml"
 
 module Colors
@@ -31,32 +31,30 @@ module Colors
 
 end
 
-module Runit
+module Transit
 
   # Path constants
-  RUNIT_HOME = File.realpath(File.join(File.dirname(__FILE__), '..')).freeze
-  CONFIGS_PATH = File.join(RUNIT_HOME, 'configs').freeze
+  TRANSIT_HOME = File.realpath(File.join(File.dirname(__FILE__), '..')).freeze
+  CONFIGS_PATH = File.join(TRANSIT_HOME, 'configs').freeze
 
 
-  class Transit
-    include Runit
+  class Runit
+    include Transit
 
     String.send(:include, Colors)
 
     def initialize(argv=nil)
 
-      puts "Tranist - search line in source files with russian letters "
-
-      config_file = File.join(Runit::CONFIGS_PATH, 'default.yaml')
+      config_file = File.join(Transit::CONFIGS_PATH, 'default.yaml')
 
       if !argv.nil? && argv[0] == "-c"
-        if argv[1] && File.file?(File.join(Runit::CONFIGS_PATH, argv[1]))
+        if argv[1] && File.file?(File.join(Transit::CONFIGS_PATH, argv[1]))
           config_file = argv[1]
         else
           puts "Config not found!".red
           puts "Usage:"
           puts "#{__FILE__} -c <config name>.yaml"
-          exit
+          exit 1
         end
       end
 
@@ -64,7 +62,7 @@ module Runit
         config = YAML.load_file(config_file)
       else
         puts "Please create valid config file. Read: (https://github.com/dealer-point/transit)"
-        exit
+        exit 1
       end
 
       paths = config['include']
@@ -72,7 +70,7 @@ module Runit
 
       if paths.nil? || exclude.nil?
         puts "Wrong params. Please modify config file. Read: (https://github.com/dealer-point/transit)"
-        exit
+        exit 1
       end
 
       paths.each { |path| rscan_dir(path, exclude) }
@@ -88,8 +86,8 @@ module Runit
         File.open(path, "r") do |infile|
           infile.each_line do |line|
             if start_idx = line.index(/\p{Cyrillic}/u)
-              end_idx = line.index(' ', start_idx) || start_idx + 12 # если нет пробела, то не больше 12 символов
-              puts "#{path.green}:#{line_num.to_s.brown}:#{start_idx.to_s.brown} \t\"#{line[start_idx, end_idx - start_idx]}\"".gray
+              end_idx = line.index(/[[:space:]]/, start_idx) || start_idx + 12 # если нет пробела, то не больше 12 символов
+              puts "#{path.green}:#{line_num.to_s.brown}:#{start_idx.to_s.brown} \t\"#{line[start_idx, end_idx - start_idx]}\""
             end
             line_num += 1
           end
@@ -102,7 +100,7 @@ module Runit
 
     def exclude_regs?(path, exclude)
       exclude.each do |regs|
-        return true if File.fnmatch(regs, path, File::FNM_PATHNAME || File::FNM_DOTMATCH)
+        return true if File.fnmatch(regs, path, File::FNM_DOTMATCH)
       end
       false
     end
@@ -113,12 +111,14 @@ module Runit
         Dir.foreach root_path do |path|
           unless path == '.' || path == '..'
             next_path = "#{root_path}/#{path}"
-
             if File.directory?(next_path)
               rscan_dir(next_path, exclude) unless path == '.' || path == '..'
             else
               unless exclude_regs?(next_path, exclude)
+                # puts "#{next_path.brown} = #{exclude.to_s.cyan}"
                 scan_file next_path
+              else
+                # puts "#{next_path.green}:skipped"
               end
             end
           end
@@ -127,7 +127,6 @@ module Runit
         scan_file root_path
       end
     end
-
 
   end
 

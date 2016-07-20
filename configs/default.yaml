@@ -1,0 +1,10 @@
+include:
+    - "/home/vladimir/projects/transit/test/test.txt"
+    - "/home/vladimir/projects/transit/test/test2"
+    - "/home/vladimir/projects/transit/test/abc"
+    - "/home/vladimir/projects/transit/test"
+exclude:
+    - "*.tmp"
+    - test/123/123
+    - "**/*.swp"
+    - "**/test.txt"
