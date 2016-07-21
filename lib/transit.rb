@@ -34,6 +34,7 @@ end
 module Transit
 
   # Path constants
+  WORK_PATH = Dir.pwd.freeze
   TRANSIT_HOME = File.realpath(File.join(File.dirname(__FILE__), '..')).freeze
   CONFIGS_PATH = File.join(TRANSIT_HOME, 'configs').freeze
 
@@ -53,7 +54,7 @@ module Transit
         else
           puts "Config not found!".red
           puts "Usage:"
-          puts "#{__FILE__} -c <config name>.yaml"
+          puts "#{File.basename(__FILE__)} -c <config_name>.yaml"
           exit 1
         end
       end
@@ -66,20 +67,20 @@ module Transit
       end
 
       paths = config['include']
-      exclude = config['exclude']
+      excludes = config['exclude']
 
-      if paths.nil? || exclude.nil?
+      if paths.nil? || excludes.nil?
         puts "Wrong params. Please modify config file. Read: (https://github.com/dealer-point/transit)"
         exit 1
       end
 
-      paths.each { |path| rscan_dir(path, exclude) }
+      scan_paths(paths, excludes)
 
     end
 
   private
 
-    # scan Cyrillic in file
+    # Scan Cyrillic in file
     def scan_file(path)
       begin
         line_num = 1
@@ -98,33 +99,19 @@ module Transit
       end
     end
 
-    def exclude_regs?(path, exclude)
-      exclude.each do |regs|
-        return true if File.fnmatch(regs, path, File::FNM_DOTMATCH)
-      end
-      false
-    end
+    # Scan
+    def scan_paths(paths, excludes)
+      file_path = Dir.glob(paths) - Dir.glob(excludes)
+      file_path.each do |path|
 
-    # recursive scan dirs
-    def rscan_dir(root_path, exclude)
-      if File.directory?(root_path)
-        Dir.foreach root_path do |path|
-          unless path == '.' || path == '..'
-            next_path = "#{root_path}/#{path}"
-            if File.directory?(next_path)
-              rscan_dir(next_path, exclude) unless path == '.' || path == '..'
-            else
-              unless exclude_regs?(next_path, exclude)
-                # puts "#{next_path.brown} = #{exclude.to_s.cyan}"
-                scan_file next_path
-              else
-                # puts "#{next_path.green}:skipped"
-              end
-            end
-          end
+        if File.file? path
+          scan_file path
+        elsif File.directory?(path)
+        else
+          # wildcard
+          scan_file WORK_PATH + path
         end
-      elsif File.file? root_path
-        scan_file root_path
+
       end
     end
 

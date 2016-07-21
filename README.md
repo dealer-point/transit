@@ -12,8 +12,8 @@ you can change it with param `-c <config_file>`
 Path to file or path
 ```yaml
 include:
- - <path>
  - <file_path>
+ - <path_with_wildcard>
 ```
 
 ### exclude params
@@ -21,36 +21,34 @@ Path or pattern
 ([Pattern format [http://ruby-doc.org/#fnmatch]](http://ruby-doc.org/core-2.2.0/File.html#method-c-fnmatch))
 ```yaml
 exclude:
- - <path>
  - <file_path>
- - <regs_mask>
+ - <path_with_wildcard>
 ```
 
-examples
+Examples
 --------------
-### config
+### Example config
 ```yaml
 include:
-    - test/test.txt
-    - ./test2
-    - abc
-    - "test"
+    - "test/*.txt"
+    - "**/*.rb"
+
 exclude:
-    - "test/*.tmp"
-    - test/123/123
-    - "*/*.swp"
-    - "*/test.txt"
+    - "**/*.tmp"
+    - test/123
+    - "**/*.swp"
+    - "**/test.txt"
 ```
-### output
+### Example output
 ```sh
 user $ ./transit.rb
 Tranist search russian letters in files
-test/test.txt:1:8 	"Тема:"
-test/test.txt:3:0 	"Ригидность,"
-test/test.txt:5:0 	"Перцепция"
-test/test.txt:8:19 	"вован,"
-test/test.txt:10:0 	"Эгоцентризм,"
-test/test.txt:16:0 	"Чувство"
+test/test2.txt:1:8 	"Тема:"
+test/test2.txt:3:0 	"Ригидность,"
+test/test2.txt:5:0 	"Перцепция"
+test/test2.txt:8:19 	"вован,"
+test/test2.txt:10:0 	"Эгоцентризм,"
+test/test2.txt:16:0 	"Чувство"
 test/test.rb:1:8 	"Тема:"
 test/test.rb:3:0 	"Ригидность,"
 test/test.rb:5:0 	"Перцепция"
