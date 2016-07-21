@@ -51,12 +51,13 @@ module Transit
 
     def initialize(argv=nil)
 
-      config_file = File.join(Transit::CONFIGS_PATH, 'default.yaml')
+      config_file = File.join(Transit::WORK_PATH, '.tansit.yaml')
 
-      if !argv.nil? && argv[0] == "-c"
-        if argv[1] && File.file?(File.join(Transit::CONFIGS_PATH, argv[1]))
-          config_file = argv[1]
-        else
+      config_file = File.join(Transit::CONFIGS_PATH, 'default.yaml') unless File.file?(config_file)
+
+      if !argv.nil? && argv[0] == "-c" && argv[1]
+        config_file = File.expand_path(argv[1])
+        unless File.file?(config_file)
           puts "Config not found!".red
           puts "Usage:"
           puts "#{File.basename(__FILE__)} -c <config_name>.yaml"
