@@ -38,6 +38,11 @@ module Transit
   TRANSIT_HOME = File.realpath(File.join(File.dirname(__FILE__), '..')).freeze
   CONFIGS_PATH = File.join(TRANSIT_HOME, 'configs').freeze
 
+  class << self
+     attr_accessor :total
+  end
+
+  self.total = { 'files' => 0, 'lines' => 0, 'lines_cyr' => 0 }
 
   class Runit
     include Transit
@@ -83,16 +88,24 @@ module Transit
     # Scan Cyrillic in file
     def scan_file(path)
       begin
+        Transit.total["files"] += 1
         line_num = 1
+        lines_cyr = 0
+
         File.open(path, "r") do |infile|
           infile.each_line do |line|
             if start_idx = line.index(/\p{Cyrillic}/u)
               end_idx = line.index(/[[:space:]]/, start_idx) || start_idx + 12 # если нет пробела, то не больше 12 символов
               puts "#{path.green}:#{line_num.to_s.brown}:#{start_idx.to_s.brown} \t\"#{line[start_idx, end_idx - start_idx]}\""
+              lines_cyr += 1
             end
             line_num += 1
           end
         end
+
+        Transit.total["lines"] += line_num
+        Transit.total["lines_cyr"] += lines_cyr
+
       rescue => err
         puts "Exception: #{err}"
         err

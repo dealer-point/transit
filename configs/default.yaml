@@ -1,5 +1,5 @@
 include:
-    - "/home/vladimir/projects/transit/test/*.txt"
+    - "*.txt"
     - "**/*.rb"
 
 exclude:

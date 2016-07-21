@@ -4,3 +4,8 @@ require 'transit'
 
 puts "TransIt - search line in source files with russian letters"
 Transit::Runit.new ARGV
+
+puts "--"
+puts "Всего файлов: #{Transit.total['files']}",
+     "Всего строк в фалах: #{Transit.total['lines']}",
+     "Строк с кирилицей: #{Transit.total['lines_cyr']}"
