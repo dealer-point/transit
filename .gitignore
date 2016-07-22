@@ -1,5 +1,7 @@
+*.swp
 *.gem
 *.rbc
+.editorconfig
 /.config
 /coverage/
 /InstalledFiles

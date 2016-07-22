@@ -1,0 +1,7 @@
+include:
+    - "*.erb"
+    - "**/*.rb"
+
+exclude:
+    - "*.tmp"
+    - "**/*.swp"
