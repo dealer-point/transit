@@ -51,7 +51,7 @@ module Transit
 
     def initialize(argv=nil)
 
-      config_file = File.join(Transit::WORK_PATH, '.tansit.yaml')
+      config_file = File.join(Transit::WORK_PATH, '.transit.yaml')
 
       config_file = File.join(Transit::CONFIGS_PATH, 'default.yaml') unless File.file?(config_file)
 
@@ -73,9 +73,9 @@ module Transit
       end
 
       paths = config['include']
-      excludes = config['exclude']
+      excludes = config['exclude'] || []
 
-      if paths.nil? || excludes.nil?
+      if paths.nil?
         puts "Wrong params. Please modify config file. Read: (https://github.com/dealer-point/transit)"
         exit 1
       end
